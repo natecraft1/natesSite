@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style type="text/css">
+	.example_path {
+		width: 200px;
+		height: 100px;
+		border: 2px solid red;
+	}
+	.example_block {
+		height: 90px;
+		width: 90px;
+		background-color: blue;
+		position: absolute;
+	}
+</style>
+<script>
+	function move(elem) {
+		var to = 400;
+		animate({
+			"duration": 5000,
+			"delta": function(d) {  for(var a = 0, b = 1, result; 1; a += b, b /= 2) {
+    if (d >= (7 - 4 * a) / 11) {
+      return -Math.pow((11 - 6 * a - 11 * d) / 4, 2) + Math.pow(b, 2)
+    }
+  }
+ },
+			"step": function(d) { elem.style.left = to*d + "px"; },
+			"delay": 15
+		});
+	}
+
+	function animate(opts) {
+		var start = new Date;
+
+		var id = setInterval(function() {
+			var timePassed = new Date - start;
+
+			var progress = timePassed/opts.duration;
+
+			if (progress > 1) progress = 1;
+
+			var delta = opts.delta(progress);
+
+			opts.step(delta);
+
+			if (progress == 1) {
+				clearInterval(id);
+			}
+		}, opts.delay || 15);
+	}
+
+</script>
+</head>
+<body>
+<div onclick="move(this.children[0])" class="example_path">
+    <div class="example_block"></div>
+</body>
+</html>

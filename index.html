@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	<link href='http://fonts.googleapis.com/css?family=League+Script' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Syncopate' rel='stylesheet' type='text/css'>
+	<script>
+
+	</script>
+</head>
+<style>
+	body {
+		overflow-x: hidden;
+		overflow-y: hidden;
+		margin: 0;
+	}
+  .topBar {
+  	height: 20px;
+  }
+  .innerTopBar {
+  	height: 20px;
+  	position: absolute;
+  }
+  .menu {
+  	padding-top: 3px;
+  	height: 20px;
+  }
+  .menuP {
+  	position: absolute;
+  	display: inline-block;
+  	padding: 0;
+  	margin: 0;
+  	font-size: 12px;
+  	text-align: center;
+  	font-family: 'Syncopate', sans-serif;
+
+  }
+  .content {
+  	position: absolute;
+    width: 650px;
+    left: 325px;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  }
+  .intro {
+  	box-shadow: 0 0 1px rgba(0, 0, 0, 0.05);
+  	position: absolute;
+  	font-size: 40px;
+  	font-family: 'League Script', cursive;
+  	width: 650px;
+  	pointer-events: none;
+  }
+  
+  #resume p {
+  	font-weight: bold;
+  	font-size: 34px;
+  }
+  p.first { 
+  	padding-bottom: 300px;
+  }
+  p.second {
+  	font-family: 'Syncopate', sans-serif;
+    color: #3759c8;
+  }
+  .resume_text {
+  	pointer-events: none;
+  }
+ 
+</style>
+<body>
+	<div class="topBar"></div>
+	<div class="menu"></div>
+	<div class="intro">
+		<p class="first">to whom it may concern...</p>
+	</div>
+	<div id="resume" class="content"></div>
+	<div id="about" class="content">I like to program????????????????</div>
+	<div id="pictures" class="content">pictures picturespictures pictures  pictures pictures pictures picturespictures pictures  pictures picture pictures picturespictures pictures  pictures picturepictures picturespictures pictures  pictures picture pictures picturespictures pictures  pictures picture</div>
+	<div id="blog" class="content">blog blog blogblog blog  blog blog blog blog blogblog blog  blog blog  blog blog blogblog blog  blog blog  blog blog blogblog blog  blog blog  blog blog blogblog blog  blog blog </div>
+
+	<script>
+	var index = 4, 
+			width = window.innerWidth, 
+			height = window.innerHeight,
+			fourthWidth = ~~(width/index), 
+			topBar = document.querySelector(".topBar"),
+			intro = document.querySelector(".intro"),
+			menu = document.querySelector(".menu"),
+			resume = document.getElementById("resume"),
+			about = document.getElementById("about"), 
+			pictures = document.getElementById("pictures"), 
+			blog = document.getElementById("blog"), 
+			colors = ["#3759c8", "#22dd83", "#b0e3fc", "#9128d7"],
+			menuText = ["Resume", "About", "Pictures", "Blog"];
+
+// animation variables 
+	var x = 325, y = (height - 300)/2, dy = -100;
+	var resumeLeft = fourthWidth * -2,
+			picturesTop = -200;
+
+	topBar.style.width = width;
+	menu.style.width = width;
+	intro.style.top = y + "px";
+	intro.style.left = x + "px";
+	about.style.top = height + "px";
+	about.style.left = x + "px";
+	resume.style.left = resumeLeft + "px";
+	resume.style.top = y + "px";
+	pictures.style.top = picturesTop + "px";
+	pictures.style.left = x + "px";
+	blog.style.top = y + "px";
+	blog.style.left = width + "px";
+
+	// append colored divs
+	for (i = 0; i < index; i++) {
+		// top colors
+		var div = document.createElement("div");
+		div.className = "innerTopBar";
+		div.style.width = fourthWidth + "px";
+		div.style.left = fourthWidth * i + "px";
+		div.style.backgroundColor = colors[i];
+		topBar.appendChild(div);
+		// menu
+		var menuP = document.createElement("p");
+		menuP.className = "menuP";
+		menuP.innerHTML =  "<a onclick='transition(this)'>" + menuText[i] + "</a>"
+		menuP.style.width = fourthWidth + "px";
+		menuP.style.left = fourthWidth * i + "px";
+		menuP.style.color = colors[i];
+		menu.appendChild(menuP);
+	}
+
+	// write resume content
+
+	var resume_svg = d3.select("#resume").append("svg").attr("class", "container");
+	var resumeP = d3.select("#resume").append("p");
+	var resume_data = 
+	[
+		{"age": 17, "p": "Worked for my Dad."}, 
+		{"age": 21, "p": "Internship @ the Myers Group."},
+		{"age": 22, "p": "Graduated Bachelors in Finance from The University of Arizona"},
+		{"age": 23, "p": "First year of Finance @ University of Ljubljana"},
+		{"age": 24, "p": "Abandoned the Masters to focus on Entrepreneurial endeavor, WordsBond.com"},
+		{"age": 25, "p": "Moved to Santa Monica for General Assembly's Web Development Immersive course"}, 
+		{"age": 25, "p": "Completed 3 month apprenticeship with TheAudience"}
+	];
+	resumeP.text(resume_data[0].p);
+	
+	var color = d3.scale.linear()
+    .domain([17, 25])
+    .range(["#3759c8", "#9128d7"]);
+
+
+	(function() {
+    var lastTime = 0;
+    var vendors = ['ms', 'moz', 'webkit', 'o'];
+    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+        window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+        window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame']
+                                   || window[vendors[x]+'CancelRequestAnimationFrame'];
+    }
+ 
+    if (!window.requestAnimationFrame)
+        window.requestAnimationFrame = function(callback, element) {
+          var currTime = new Date().getTime();
+          var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+          var id = window.setTimeout(function() { callback(currTime + timeToCall); },
+            timeToCall);
+          lastTime = currTime + timeToCall;
+          return id;
+        };
+ 
+    if (!window.cancelAnimationFrame)
+        window.cancelAnimationFrame = function(id) {
+            clearTimeout(id);
+        };
+	}());
+
+	var currentTop, currentLeft, active;
+	
+	function initializeResume() {
+		var resume_circles = resume_svg
+			.attr("height", 60)
+			.attr("width", fourthWidth*2)
+			.selectAll("circle")
+			.data(resume_data)
+			.enter()
+			.append('svg:circle');
+
+		resume_circles
+			.attr("r", function(d) { return d.age })
+			.attr("fill", function(d) { return color(d.age) })
+			.attr("cx", function(d, i) { return i*fourthWidth*2/resume_data.length + 20})
+			.attr("cy", 30)
+			.on("mouseover", function(d) {	
+				resume_circles[0][0].setAttribute("fill", "#3759c8");
+				this.setAttribute("fill", "#fcf4b5");
+				resume.children[1].innerHTML = d.p;
+			})
+			.on("mouseout", function() {
+				this.setAttribute("fill", "#3759c8");
+			});
+
+			resume_circles[0][0].setAttribute("fill", "#fcf4b5");
+
+		var resume_ages = resume_svg
+		.selectAll("text")
+		.data(resume_data)
+		.enter()
+		.append("text");
+
+		resume_ages
+		.attr("class", "resume_text")
+		.attr("dx", function(d, i) { return i*fourthWidth*2/resume_data.length + 12})
+		.attr("dy", 35)
+		.text(function(d) { return d.age });
+	}
+
+	function transition(elem) {
+		console.log(active);
+		console.log(elem.innerHTML);
+
+		// if (elem.innerHTML == "Resume") { initializeResume() };
+
+		if (active == document.getElementById(elem.innerHTML.toLowerCase())) { return; }
+		if (active !== undefined) {
+			move(active, y, x, -currentTop, -currentLeft, -1);
+		} else {
+			move(intro, y, x, height, x, -1);
+		}
+		active = document.getElementById(elem.innerHTML.toLowerCase());
+		currentTop = active.offsetTop;
+		currentLeft = active.offsetLeft;
+		
+		move(active, currentTop, currentLeft, y, x, 1, elem.innerHTML);
+
+	}
+
+	function move(element, starttop, startleft, endTop, endLeft, i, elem) {
+
+		var toTop = -starttop + i*endTop;
+		var toLeft = -startleft + i*endLeft;
+		console.log(elem);
+		animate({
+			"elem": elem,
+			"duration": 1000,
+			"delta": function(p) { return Math.pow(p, 2); },
+			"step": function(delta) { 
+				element.style.top = starttop + toTop*delta + "px";
+				element.style.left = startleft + toLeft*delta + "px";
+			 } 
+		});
+	}
+
+	function animate(opts) {
+	var start = new Date;
+	hereWeGo();
+  	function hereWeGo() {
+  	  var anim = window.requestAnimationFrame(hereWeGo);
+	    var timePassed = new Date - start
+
+	    var progress = timePassed / opts.duration
+
+	    if (progress > 1) progress = 1
+
+	    var delta = opts.delta(progress);
+	    opts.step(delta);
+	    if (progress == 1) {
+	    	if (opts.elem == "Resume") { initializeResume() };
+	      window.cancelAnimationFrame(anim);
+	    }
+		}
+	}
+
+	</script>
+</body>
+</html>
